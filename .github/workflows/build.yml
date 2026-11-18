@@ -1,5 +1,5 @@
 steps:
-  - name: Get project
+  - name: Checkout
     uses: actions/checkout@v4
 
   - name: Setup Java
@@ -8,29 +8,29 @@ steps:
       distribution: temurin
       java-version: '17'
 
+  - name: Setup Android
+    uses: android-actions/setup-android@v4
+
   - name: Setup Gradle
     uses: gradle/actions/setup-gradle@v4
     with:
       gradle-version: '8.9'
 
-  - name: Setup Android SDK
-    uses: android-actions/setup-android@v4
+  - name: Install SDK
+    run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
   - name: Extract project
     run: |
       mkdir project
-      unzip -q *.zip -d project
-      find project -name settings.gradle.kts
+      unzip -q BBB_CODM_EDITION_Project.zip -d project
 
   - name: Build APK
     run: |
-      PROJECT_DIR=￼(find project -name settings.gradle.kts -print -quit)")
-      cd "$PROJECT_DIR"
-      sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      cd project/BBB_CODM_EDITION
       gradle assembleDebug
 
   - name: Upload APK
     uses: actions/upload-artifact@v4
     with:
       name: BBB-APK
-      path: project/**/app/build/outputs/apk/debug/app-debug.apk
+      path: project/BBB_CODM_EDITION/app/build/outputs/apk/debug/app-debug.apk
